@@ -1,5 +1,5 @@
 ---
-name: engagement-letter
+name: consulting-engagement-letter
 description: >
   Generate professional consulting engagement letters as Word documents (.docx).
   Use this skill whenever the user asks for an engagement letter, consulting agreement,
