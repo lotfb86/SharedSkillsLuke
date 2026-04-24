@@ -1,0 +1,28 @@
+{
+  "_comment": "URLs containing any of these substrings are stripped before enrichment. Firecrawl rejects social+marketplaces, big-box, and known-broken sites. FB blocklist strips obvious non-business URLs.",
+  "firecrawl": [
+    "facebook.com",
+    "instagram.com",
+    "twitter.com",
+    "x.com",
+    "tiktok.com",
+    "youtube.com",
+    "linkedin.com",
+    "pinterest.com",
+    "yelp.com",
+    "google.com",
+    "goo.gl",
+    "merchantcircle.com",
+    "rymaps.xyz",
+    "solarroadways.com",
+    "acehardware.com",
+    "homedepot.com",
+    "lowes.com"
+  ],
+  "facebook": [
+    "/share.php",
+    "/sharer.php",
+    "/login",
+    "/help"
+  ]
+}
