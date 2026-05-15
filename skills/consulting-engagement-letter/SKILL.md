@@ -51,7 +51,7 @@ Before generating the letter, collect the following. If the user has already pro
 | Client Address | [Address] / [City, State ZIP] (placeholder) |
 | Max Participants | 5 |
 | Additional Participant Fee | $1,500 per person |
-| Payment Split | 50% on signing, 50% on completion |
+| Payment Terms | Paid in full upfront — sessions are scheduled upon receipt of payment. Override only if the client explicitly requests a split. |
 | Payment Methods | Wire transfer, ACH, or check |
 | Delivery Method | Video conference (Zoom or Google Meet) |
 | Completion Window | 4 weeks from kickoff |
@@ -91,7 +91,7 @@ fi
 
 The engagement letter follows this exact structure:
 
-1. **Header** — Ruh AI branding with company name and tagline
+1. **Header** — Single "Ruh AI" wordmark in primary color above a hairline gray rule (no tagline, no thick navy bar)
 2. **Date & Addressee** — Today's date, client name, company, address
 3. **Opening Paragraph** — Thank them, reference the conversation, state purpose
 4. **Section 1: The Outcome** — What participants walk away with (outcome-based, never hourly)
@@ -113,9 +113,12 @@ The engagement letter follows this exact structure:
 - **Outcome-first framing.** Lead with what they get, not what we do. The "How We Get There" section describes the progression without quantifying time.
 - **Use the four phases exactly:** Discovery → Plan → Build → Verify & Handoff.
 - **Always include the satisfaction guarantee and agent build credit** unless the user explicitly says to remove them.
-- **Brand colors:** Primary: `1B3A5C` (dark navy), Accent: `666666` (gray for subtitles/notes).
-- **Font:** Arial throughout. Title 18pt, H1 16pt, H2 13pt, body 11pt.
+- **Brand colors:** Primary: `1B3A5C` (dark navy), Accent: `666666` (gray for subtitles/notes), Surface: `F2F2F2` (light gray for table headers — never solid navy fills).
+- **Font:** Arial throughout. Title 14pt, H1 12pt, H2 11pt, body 11pt. Keep weights restrained — bold is for emphasis, not decoration.
 - **Page size:** US Letter (12240 x 15840 DXA), 1-inch margins.
+- **Letterhead:** Single "Ruh AI" wordmark in primary color above a hairline gray rule. No taglines, no thick navy bars, no all-caps slogans — the letter is a contract, not a brochure.
+- **Investment table:** Light gray header row (`F2F2F2`) with primary-color text. Price is body-weight bold, not jumbo. Hairline gray borders only.
+- **Signature label:** "Accepted and agreed:" — sentence case, body color, bold only. Never all-caps in primary color.
 
 ## Customization Points
 

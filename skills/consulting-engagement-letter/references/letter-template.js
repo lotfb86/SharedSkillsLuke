@@ -58,7 +58,7 @@ const CONFIG = {
   price: 5000,                              // Flat fee in dollars
   additionalParticipantFee: 1500,           // Per additional person
   maxGroupSize: 5,                          // Maximum participants
-  paymentSplit: [50, 50],                   // Percentage split [signing, completion]
+  paymentSplit: [100, 0],                   // Percentage split [signing, completion]. Default is full payment upfront; sessions are scheduled upon receipt.
   paymentMethods: "wire transfer, ACH, or check",
 
   // Logistics
@@ -147,9 +147,8 @@ const children = [];
 
 // --- HEADER ---
 children.push(
-  new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: "RUH AI", size: 36, bold: true, color: COLORS.primary })] }),
-  new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: "Autonomous AI Solutions", size: 20, color: COLORS.gray, italics: true })] }),
-  new Paragraph({ border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.primary, space: 1 } }, spacing: { after: 400 }, children: [] }),
+  new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: "Ruh AI", size: 28, bold: true, color: COLORS.primary })] }),
+  new Paragraph({ border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "CCCCCC", space: 4 } }, spacing: { after: 360 }, children: [] }),
 );
 
 // --- DATE & ADDRESSEE ---
@@ -238,13 +237,13 @@ children.push(new Table({
       children: [
         new TableCell({
           borders, width: { size: 6000, type: WidthType.DXA }, margins: cellMargins,
-          shading: { fill: COLORS.primary, type: ShadingType.CLEAR },
-          children: [new Paragraph({ children: [new TextRun({ text: "Engagement", bold: true, color: COLORS.white })] })],
+          shading: { fill: COLORS.lightGray, type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: "Engagement", bold: true, color: COLORS.primary })] })],
         }),
         new TableCell({
           borders, width: { size: 3360, type: WidthType.DXA }, margins: cellMargins,
-          shading: { fill: COLORS.primary, type: ShadingType.CLEAR },
-          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Flat Fee", bold: true, color: COLORS.white })] })],
+          shading: { fill: COLORS.lightGray, type: ShadingType.CLEAR },
+          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Flat Fee", bold: true, color: COLORS.primary })] })],
         }),
       ],
     }),
@@ -260,7 +259,7 @@ children.push(new Table({
         new TableCell({
           borders, width: { size: 3360, type: WidthType.DXA }, margins: cellMargins,
           verticalAlign: "center",
-          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: fmt(CONFIG.price), bold: true, size: 28 })] })],
+          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: fmt(CONFIG.price), bold: true })] })],
         }),
       ],
     }),
@@ -268,9 +267,15 @@ children.push(new Table({
 }));
 
 children.push(new Paragraph({ spacing: { before: 300, after: 100 }, children: [new TextRun({ text: "Payment Terms:", bold: true })] }));
-children.push(bullet("bullets", `${CONFIG.paymentSplit[0]}% (${fmt(deposit)}) due upon signing to reserve engagement dates`));
-children.push(bullet("bullets", `${CONFIG.paymentSplit[1]}% (${fmt(balance)}) due upon completion`));
-children.push(bullet("bullets", `Payment accepted via ${CONFIG.paymentMethods}`, 200));
+if (CONFIG.paymentSplit[0] === 100) {
+  children.push(bullet("bullets", `Full payment of ${fmt(CONFIG.price)} due upon signing`));
+  children.push(bullet("bullets", "Sessions are scheduled upon receipt of payment"));
+  children.push(bullet("bullets", `Payment accepted via ${CONFIG.paymentMethods}`, 200));
+} else {
+  children.push(bullet("bullets", `${CONFIG.paymentSplit[0]}% (${fmt(deposit)}) due upon signing to reserve engagement dates`));
+  children.push(bullet("bullets", `${CONFIG.paymentSplit[1]}% (${fmt(balance)}) due upon completion`));
+  children.push(bullet("bullets", `Payment accepted via ${CONFIG.paymentMethods}`, 200));
+}
 
 // --- SECTION 5: LOGISTICS ---
 children.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("5. Logistics")] }));
@@ -300,7 +305,7 @@ if (CONFIG.followUpTeaser) {
 children.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("8. Term & Cancellation")] }));
 children.push(bullet("bullets", `This engagement letter is valid for ${CONFIG.letterValidDays} days from the date above`));
 children.push(bullet("bullets", `Either party may cancel with ${CONFIG.cancellationNoticeDays} days written notice`));
-children.push(bullet("bullets", "If cancelled after discovery, the initial deposit is non-refundable"));
+children.push(bullet("bullets", "Once the engagement has begun, payments are non-refundable except as provided in the Satisfaction Guarantee below"));
 children.push(bullet("bullets", `The engagement must be completed within ${CONFIG.completionDeadline}`, 300));
 
 // --- SECTION 9: SATISFACTION GUARANTEE ---
@@ -334,17 +339,15 @@ if (CONFIG.includeAgentCredit) {
   }));
 }
 
-// --- DIVIDER ---
-children.push(new Paragraph({
-  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.primary, space: 1 } },
-  spacing: { after: 300 },
-  children: [],
-}));
+// --- SPACING BEFORE CLOSING ---
+children.push(new Paragraph({ spacing: { before: 280, after: 240 }, children: [] }));
 
 // --- CLOSING ---
 children.push(new Paragraph({
   spacing: { after: 200 },
-  children: [new TextRun("If this works for you, sign below and return this letter along with the initial deposit. I look forward to working with your team.")],
+  children: [CONFIG.paymentSplit[0] === 100
+    ? new TextRun(`If this works for you, sign below and return this letter along with payment of ${fmt(CONFIG.price)}. Once payment is received, we'll get sessions on the calendar. I look forward to working with your team.`)
+    : new TextRun("If this works for you, sign below and return this letter along with the initial deposit. I look forward to working with your team.")],
 }));
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Warm regards,")] }));
 children.push(new Paragraph({ spacing: { after: 0 }, children: [] }));
@@ -354,7 +357,7 @@ children.push(new Paragraph({ spacing: { after: 0 }, children: [new TextRun(CONF
 children.push(new Paragraph({ spacing: { after: 400 }, children: [new TextRun({ text: CONFIG.senderContact, color: COLORS.gray, size: 20 })] }));
 
 // --- SIGNATURE BLOCK ---
-children.push(new Paragraph({ spacing: { before: 200, after: 200 }, children: [new TextRun({ text: "ACCEPTED AND AGREED:", bold: true, color: COLORS.primary })] }));
+children.push(new Paragraph({ spacing: { before: 320, after: 200 }, children: [new TextRun({ text: "Accepted and agreed:", bold: true })] }));
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Signature: ___________________________________________")] }));
 children.push(new Paragraph({ spacing: { after: 200 }, children: [] }));
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Printed Name: ________________________________________")] }));
@@ -373,13 +376,13 @@ const doc = new Document({
     paragraphStyles: [
       {
         id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 32, bold: true, font: "Arial", color: COLORS.primary },
-        paragraph: { spacing: { before: 360, after: 200 }, outlineLevel: 0 },
+        run: { size: 24, bold: true, font: "Arial", color: COLORS.primary },
+        paragraph: { spacing: { before: 320, after: 140 }, outlineLevel: 0 },
       },
       {
         id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 26, bold: true, font: "Arial", color: COLORS.primary },
-        paragraph: { spacing: { before: 240, after: 120 }, outlineLevel: 1 },
+        run: { size: 22, bold: true, font: "Arial", color: COLORS.primary },
+        paragraph: { spacing: { before: 200, after: 100 }, outlineLevel: 1 },
       },
     ],
   },
