@@ -133,11 +133,11 @@ function phase(title, description) {
   return [
     new Paragraph({
       spacing: { before: 200, after: 80 },
-      children: [new TextRun({ text: title, bold: true, color: COLORS.primary })],
+      children: [new TextRun({ text: title, bold: true, font: "Arial" })],
     }),
     new Paragraph({
       spacing: { after: 120 },
-      children: [new TextRun(description)],
+      children: [new TextRun({ text: description, font: "Arial" })],
     }),
   ];
 }
@@ -147,7 +147,7 @@ const children = [];
 
 // --- HEADER ---
 children.push(
-  new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: "Ruh AI", size: 28, bold: true, color: COLORS.primary })] }),
+  new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: "Ruh AI", size: 28, bold: true, color: COLORS.primary, font: "Arial" })] }),
   new Paragraph({ border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "CCCCCC", space: 4 } }, spacing: { after: 360 }, children: [] }),
 );
 
@@ -180,17 +180,14 @@ children.push(new Paragraph({
 
 CONFIG.outcomes.forEach((o, i) => {
   children.push(bullet("bullets", [
-    new TextRun({ text: o.bold, bold: true }),
-    new TextRun(o.rest),
+    new TextRun({ text: `${o.bold}${o.rest}`, font: "Arial" }),
   ], i === CONFIG.outcomes.length - 1 ? 200 : 60));
 });
 
 children.push(new Paragraph({
   spacing: { after: 200 },
   children: [
-    new TextRun("The goal is not just training\u2014it\u2019s getting your people to a point where they are "),
-    new TextRun({ text: CONFIG.outcomeSummary, bold: true }),
-    new TextRun(", with real workflows running on real work, before we\u2019re done."),
+    new TextRun({ text: `The goal is not just training\u2014it\u2019s getting your people to a point where they are ${CONFIG.outcomeSummary}, with real workflows running on real work, before we\u2019re done.`, font: "Arial" }),
   ],
 }));
 
@@ -207,9 +204,7 @@ children.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new Te
 children.push(new Paragraph({
   spacing: { after: 200 },
   children: [
-    new TextRun("This engagement covers up to "),
-    new TextRun({ text: `${CONFIG.participants.length} (${["zero","one","two","three","four","five"][CONFIG.participants.length]})`, bold: true }),
-    new TextRun(" participants:"),
+    new TextRun({ text: `This engagement covers up to ${CONFIG.participants.length} (${["zero","one","two","three","four","five"][CONFIG.participants.length]}) participants:`, font: "Arial" }),
   ],
 }));
 
@@ -234,39 +229,41 @@ children.push(new Table({
   columnWidths: [6000, 3360],
   rows: [
     new TableRow({
+      cantSplit: true,
       children: [
         new TableCell({
           borders, width: { size: 6000, type: WidthType.DXA }, margins: cellMargins,
           shading: { fill: COLORS.lightGray, type: ShadingType.CLEAR },
-          children: [new Paragraph({ children: [new TextRun({ text: "Engagement", bold: true, color: COLORS.primary })] })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Engagement", bold: true, color: COLORS.primary, font: "Arial" })] })],
         }),
         new TableCell({
           borders, width: { size: 3360, type: WidthType.DXA }, margins: cellMargins,
           shading: { fill: COLORS.lightGray, type: ShadingType.CLEAR },
-          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Flat Fee", bold: true, color: COLORS.primary })] })],
+          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Flat Fee", bold: true, color: COLORS.primary, font: "Arial" })] })],
         }),
       ],
     }),
     new TableRow({
+      cantSplit: true,
       children: [
         new TableCell({
           borders, width: { size: 6000, type: WidthType.DXA }, margins: cellMargins,
           children: [
             new Paragraph({ children: [new TextRun(CONFIG.engagementName)] }),
-            new Paragraph({ spacing: { before: 40 }, children: [new TextRun({ text: `Discovery through verified handoff for up to ${CONFIG.participants.length} participants`, italics: true, color: COLORS.gray, size: 20 })] }),
+            new Paragraph({ spacing: { before: 40 }, children: [new TextRun({ text: `Discovery through verified handoff for up to ${CONFIG.participants.length} participants`, italics: true, color: COLORS.gray, size: 20, font: "Arial" })] }),
           ],
         }),
         new TableCell({
           borders, width: { size: 3360, type: WidthType.DXA }, margins: cellMargins,
           verticalAlign: "center",
-          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: fmt(CONFIG.price), bold: true })] })],
+          children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: fmt(CONFIG.price), bold: true, font: "Arial" })] })],
         }),
       ],
     }),
   ],
 }));
 
-children.push(new Paragraph({ spacing: { before: 300, after: 100 }, children: [new TextRun({ text: "Payment Terms:", bold: true })] }));
+children.push(new Paragraph({ spacing: { before: 300, after: 100 }, children: [new TextRun({ text: "Payment Terms:", bold: true, font: "Arial" })] }));
 if (CONFIG.paymentSplit[0] === 100) {
   children.push(bullet("bullets", `Full payment of ${fmt(CONFIG.price)} due upon signing`));
   children.push(bullet("bullets", "Sessions are scheduled upon receipt of payment"));
@@ -352,12 +349,12 @@ children.push(new Paragraph({
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Warm regards,")] }));
 children.push(new Paragraph({ spacing: { after: 0 }, children: [] }));
 children.push(new Paragraph({ spacing: { after: 0 }, children: [] }));
-children.push(new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: CONFIG.senderName, bold: true })] }));
+children.push(new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: CONFIG.senderName, bold: true, font: "Arial" })] }));
 children.push(new Paragraph({ spacing: { after: 0 }, children: [new TextRun(CONFIG.senderTitle)] }));
-children.push(new Paragraph({ spacing: { after: 400 }, children: [new TextRun({ text: CONFIG.senderContact, color: COLORS.gray, size: 20 })] }));
+children.push(new Paragraph({ spacing: { after: 400 }, children: [new TextRun({ text: CONFIG.senderContact, color: COLORS.gray, size: 20, font: "Arial" })] }));
 
 // --- SIGNATURE BLOCK ---
-children.push(new Paragraph({ spacing: { before: 320, after: 200 }, children: [new TextRun({ text: "Accepted and agreed:", bold: true })] }));
+children.push(new Paragraph({ spacing: { before: 320, after: 200 }, children: [new TextRun({ text: "Accepted and agreed:", bold: true, font: "Arial" })] }));
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Signature: ___________________________________________")] }));
 children.push(new Paragraph({ spacing: { after: 200 }, children: [] }));
 children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Printed Name: ________________________________________")] }));
@@ -372,8 +369,17 @@ children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun("Da
 
 const doc = new Document({
   styles: {
-    default: { document: { run: { font: "Arial", size: 22 } } },
+    default: {
+      document: { run: { font: "Arial", size: 22 } },
+      heading1: { run: { font: "Arial", size: 24, bold: true, color: COLORS.primary } },
+      heading2: { run: { font: "Arial", size: 22, bold: true, color: COLORS.primary } },
+    },
     paragraphStyles: [
+      {
+        id: "Normal", name: "Normal", quickFormat: true,
+        run: { font: "Arial", size: 22 },
+        paragraph: { spacing: { line: 300 } },
+      },
       {
         id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
         run: { size: 24, bold: true, font: "Arial", color: COLORS.primary },
@@ -392,14 +398,20 @@ const doc = new Document({
         reference: "bullets",
         levels: [{
           level: 0, format: LevelFormat.BULLET, text: "\u2022", alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 720, hanging: 360 } } },
+          style: {
+            run: { font: "Arial", size: 22 },
+            paragraph: { indent: { left: 720, hanging: 360 } },
+          },
         }],
       },
       {
         reference: "numbers",
         levels: [{
           level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 720, hanging: 360 } } },
+          style: {
+            run: { font: "Arial", size: 22 },
+            paragraph: { indent: { left: 720, hanging: 360 } },
+          },
         }],
       },
     ],
