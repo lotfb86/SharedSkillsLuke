@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<!--
+  HOUSE-STYLE WORKSHOP TAKEAWAY TEMPLATE
+  Render by replacing every {{HANDLEBARS}} placeholder with the values derived from
+  the meeting context, light company research, and the six-pass transcript extraction.
+  Section visibility:
+    - SECURITY_SECTION_HTML — leave empty string if security didn't substantively come up.
+    - APPENDIX_PROMPTS_HTML — minimum 1 prompt; 3+ is ideal.
+  Output filename:
+    - Workshop #1  → Workshop-1-Takeaway.html
+    - Workshop #2+ → Workshop-N-Insights.html  (also change "Takeaway" → "Insights" inside)
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CLIENT_COMPANY}} x Ruh.AI — Workshop #{{WORKSHOP_NUMBER}} {{WORKSHOP_LABEL}}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Satoshi:wght@300;400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Satoshi', -apple-system, sans-serif;
+    background: #f5f5f7;
+    color: #1a1a2e;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .doc { max-width: 680px; margin: 0 auto; background: #ffffff; }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: #ffffff;
+    padding: 48px 48px 44px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(135deg, #ae00d0, #8323f7) 1;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(131,35,247,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -40px; left: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(174,0,208,0.04) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-logos { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; position: relative; z-index: 1; }
+  .logo-ruh { display: flex; align-items: center; gap: 10px; }
+  .logo-ruh svg { width: 28px; height: 28px; }
+  .logo-ruh-text {
+    font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800;
+    color: #1a1a2e; letter-spacing: 3px;
+  }
+  .logo-client {
+    font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+    color: #555; letter-spacing: 2px; text-transform: uppercase;
+    border: 1px solid #ddd; padding: 6px 14px; border-radius: 6px;
+  }
+  .hero-title {
+    font-family: 'Sora', sans-serif; font-size: 32px; font-weight: 800;
+    color: #1a1a2e; line-height: 1.2; margin-bottom: 8px;
+    position: relative; z-index: 1;
+  }
+  .hero-title span {
+    background: linear-gradient(135deg, #ae00d0, #8323f7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-subtitle { font-size: 14px; color: #888; font-weight: 400; position: relative; z-index: 1; }
+  .hero-meta {
+    display: flex; gap: 24px; margin-top: 28px; padding-top: 20px;
+    border-top: 1px solid #eee; position: relative; z-index: 1;
+  }
+  .meta-item { font-size: 12px; color: #999; }
+  .meta-item strong { color: #555; font-weight: 600; }
+
+  /* ── CONTENT SECTIONS ── */
+  .content { padding: 0 48px; }
+  .section { padding: 36px 0; }
+  .section + .section { border-top: 1px solid #f0f0f2; }
+  .section-label {
+    font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 3px; color: #8323f7; margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700;
+    color: #0a0a14; margin-bottom: 16px; line-height: 1.3;
+  }
+  p { font-size: 14px; color: #444; margin-bottom: 14px; }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    background: linear-gradient(135deg, #f3ecff 0%, #ede4ff 100%);
+    border: 1px solid rgba(131,35,247,0.12);
+    border-radius: 14px; padding: 24px 28px; margin: 20px 0;
+  }
+  .callout-dark {
+    background: linear-gradient(135deg, #7c3aed, #8323f7);
+    border: 1px solid rgba(131,35,247,0.3); color: #ffffff;
+  }
+  .callout-dark p { color: rgba(255,255,255,0.9); }
+  .callout-dark .callout-title { color: #ffffff; }
+  .callout-title {
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+    color: #1a1a2e; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .callout-title .icon {
+    width: 20px; height: 20px;
+    background: linear-gradient(135deg, #ae00d0, #8323f7);
+    border-radius: 5px; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 11px; flex-shrink: 0;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── TOPIC CARDS ── */
+  .topic-grid { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+  .topic-card {
+    background: #fafafa; border: 1px solid #eee; border-radius: 12px;
+    padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start;
+  }
+  .topic-num {
+    width: 28px; height: 28px; min-width: 28px;
+    background: linear-gradient(135deg, #ae00d0, #8323f7);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 13px; font-weight: 700; margin-top: 1px;
+  }
+  .topic-content h4 {
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+    color: #1a1a2e; margin-bottom: 4px;
+  }
+  .topic-content p { font-size: 13px; color: #666; margin-bottom: 0; }
+
+  /* ── ATTENDEE CHIPS ── */
+  .attendees { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .attendee-chip {
+    background: #f5f3ff; border: 1px solid rgba(131,35,247,0.1);
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: #5b21b6;
+  }
+  .attendee-chip-ruh { background: #f3ecff; border-color: rgba(131,35,247,0.2); color: #7c3aed; }
+
+  /* ── KEY CONCEPTS LIST ── */
+  .concept-list { list-style: none; margin: 12px 0; }
+  .concept-list li {
+    font-size: 13px; color: #444; padding: 8px 0 8px 24px;
+    position: relative; border-bottom: 1px solid #f5f5f7;
+  }
+  .concept-list li:last-child { border-bottom: none; }
+  .concept-list li::before {
+    content: ''; position: absolute; left: 0; top: 14px;
+    width: 8px; height: 8px;
+    background: linear-gradient(135deg, #ae00d0, #8323f7);
+    border-radius: 50%;
+  }
+  .concept-list li strong { color: #1a1a2e; }
+
+  /* ── ACTION ITEMS ── */
+  .action-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid #f0f0f2;
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-check {
+    width: 22px; height: 22px; min-width: 22px;
+    border: 2px solid #d4d4d8; border-radius: 6px; margin-top: 1px;
+  }
+  .action-text { font-size: 14px; color: #333; }
+  .action-text strong { color: #1a1a2e; }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    border-left: 3px solid #8323f7; padding: 12px 20px; margin: 16px 0;
+    background: #fdfbff; border-radius: 0 10px 10px 0;
+  }
+  .quote-block p { font-style: italic; color: #555; font-size: 14px; margin-bottom: 4px; }
+  .quote-block .attribution { font-size: 12px; color: #8323f7; font-style: normal; font-weight: 600; }
+
+  /* ── APPENDIX ── */
+  .appendix-prompt {
+    background: #f8f6ff; border-radius: 10px; padding: 18px 22px; margin: 14px 0;
+    font-family: 'Courier New', monospace; font-size: 12px; color: #333; line-height: 1.6;
+    white-space: pre-wrap; word-wrap: break-word; border: 1px solid rgba(131,35,247,0.12);
+  }
+  .appendix-context {
+    font-size: 13px; color: #666; margin-bottom: 8px;
+    padding-left: 14px; border-left: 2px solid #e0e0e0;
+  }
+
+  /* ── MEETING LINK ── */
+  .meeting-link-box {
+    background: linear-gradient(135deg, #f3ecff 0%, #ede4ff 100%);
+    border: 1px solid rgba(131,35,247,0.15); border-radius: 14px;
+    padding: 24px 28px; text-align: center; margin: 24px 0;
+  }
+  .meeting-link-box p { color: #666; font-size: 12px; margin-bottom: 10px; }
+  .meeting-link-box a {
+    color: #7c3aed; font-size: 14px; font-weight: 600; text-decoration: none;
+    border-bottom: 1px solid rgba(124,58,237,0.3); padding-bottom: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #fafafa;
+    border-top: 3px solid;
+    border-image: linear-gradient(135deg, #ae00d0, #8323f7) 1;
+    padding: 36px 48px; text-align: center;
+  }
+  .footer-logos { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px; }
+  .footer-divider { width: 1px; height: 20px; background: #ddd; }
+  .footer-text { font-size: 11px; color: #999; letter-spacing: 1px; }
+  .footer a { color: #7c3aed; text-decoration: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .doc { max-width: 100%; }
+    .hero, .content, .footer { padding-left: 28px; padding-right: 28px; }
+    .hero-title { font-size: 26px; }
+    .hero-logos { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <div class="hero">
+    <div class="hero-logos">
+      <div class="logo-ruh">
+        <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.438 12.5003C5.88097 12.4512 5.54494 11.8503 5.82311 11.3549C6.11597 10.8337 6.88643 10.8424 7.1646 11.3729C7.42734 11.8738 7.08278 12.4552 6.52978 12.5003C6.50393 12.5024 6.46385 12.5026 6.43824 12.5003H6.438Z" fill="#7B5AFF"/>
+          <path d="M6.60197 7.63229C5.69658 7.70885 5.05275 6.77755 5.48932 5.97021C5.91854 5.17685 7.07174 5.18681 7.48768 5.98822C7.84861 6.68392 7.38666 7.56616 6.60221 7.63229H6.60197Z" fill="#7B5AFF"/>
+          <path d="M9.37077 10.0683C8.79879 10.1233 8.36744 9.59237 8.56165 9.04577C8.77816 8.43682 9.63186 8.36974 9.94583 8.93294C10.2072 9.40203 9.90955 10.0164 9.37077 10.0683Z" fill="#7B5AFF"/>
+          <path d="M3.78138 10.0688C3.10649 10.129 2.6794 9.38357 3.08941 8.84266C3.43872 8.38186 4.17171 8.47668 4.39723 9.00716C4.595 9.47246 4.28933 10.0236 3.78138 10.0688Z" fill="#7B5AFF"/>
+          <path d="M9.36277 4.51006C8.7953 4.56292 8.36964 4.02698 8.56148 3.48749C8.75333 2.948 9.4811 2.81194 9.85744 3.24903C10.2554 3.71125 9.97056 4.45341 9.36277 4.51006Z" fill="#7B5AFF"/>
+          <path d="M3.76963 4.47716C3.1424 4.5331 2.71389 3.86916 3.0364 3.32446C3.35227 2.79113 4.15878 2.84802 4.39544 3.42093C4.58989 3.89121 4.28043 4.43188 3.76939 4.47739L3.76963 4.47716Z" fill="#7B5AFF"/>
+          <path d="M6.55091 2.05545C6.02447 2.08413 5.63248 1.58873 5.77429 1.08053C5.94503 0.468743 6.77596 0.330315 7.13593 0.856769C7.47243 1.34909 7.14684 2.02298 6.55091 2.05545Z" fill="#7B5AFF"/>
+          <path d="M1.36206 7.26743C0.67768 7.33333 0.245853 6.58122 0.665824 6.03699C1.07512 5.50674 1.94044 5.74709 2.02486 6.41103C2.07679 6.82015 1.78013 7.22737 1.3623 7.26743H1.36206Z" fill="#7B5AFF"/>
+          <path d="M11.8015 7.26743C11.1171 7.33333 10.6853 6.58122 11.1053 6.03699C11.5146 5.50674 12.3799 5.74709 12.4643 6.41103C12.5162 6.82015 12.2196 7.22737 11.8018 7.26743H11.8015Z" fill="#7B5AFF"/>
+          <path d="M3.75138 7.72284C2.80401 7.77286 2.16872 6.75029 2.62592 5.9183C3.0568 5.13443 4.17206 5.07493 4.6876 5.80642C5.24061 6.591 4.70396 7.67236 3.75138 7.72261V7.72284ZM3.74379 7.55502C4.68096 7.50525 5.08765 6.33856 4.38003 5.71729C3.87801 5.27641 3.09 5.41958 2.77105 6.00245C2.37764 6.72161 2.92827 7.59816 3.74379 7.55502Z" fill="#7B5AFF"/>
+          <path d="M6.60472 4.92713C5.86201 4.98781 5.24474 4.42865 5.26679 3.68104C5.30023 2.54517 6.73064 2.07656 7.43518 2.96378C8.02376 3.70522 7.54901 4.84962 6.60472 4.9269V4.92713ZM6.5969 4.75908C7.06714 4.71736 7.46269 4.31084 7.51842 3.84815C7.62797 2.93889 6.60425 2.33018 5.85987 2.86944C4.99811 3.49378 5.51104 4.85507 6.5969 4.75908Z" fill="#7B5AFF"/>
+          <path d="M6.51454 10.5233L6.45573 10.5254C5.50078 10.4967 4.93473 9.43693 5.46829 8.62982C5.93877 7.91825 6.99902 7.91137 7.48136 8.61442C8.03104 9.41583 7.47282 10.4922 6.51454 10.523V10.5233ZM6.51454 10.3554C7.33243 10.3237 7.81525 9.39971 7.34382 8.71397C6.92147 8.09958 6.01015 8.1093 5.60109 8.73222C5.14697 9.42389 5.64259 10.3329 6.45573 10.3576L6.51454 10.3554Z" fill="#7B5AFF"/>
+          <path d="M9.33502 7.72304C8.38837 7.77021 7.75521 6.74693 8.21455 5.91588C8.64732 5.13296 9.77183 5.07512 10.2788 5.81443C10.8209 6.60471 10.2869 7.67563 9.33502 7.72304ZM9.33502 7.55522C10.1465 7.50591 10.6066 6.59025 10.1415 5.91375C9.6618 5.21592 8.58828 5.34914 8.29494 6.1413C8.03385 6.84648 8.58472 7.60073 9.33502 7.55522Z" fill="#7B5AFF"/>
+        </svg>
+        <span class="logo-ruh-text">RUH</span>
+      </div>
+      <div class="logo-client">{{CLIENT_COMPANY}}</div>
+    </div>
+
+    <h1 class="hero-title">Workshop #{{WORKSHOP_NUMBER}} <span>{{WORKSHOP_LABEL}}</span></h1>
+    <p class="hero-subtitle">{{WORKSHOP_SUBTITLE}}</p>
+
+    <div class="hero-meta">
+      <div class="meta-item"><strong>Date</strong>&nbsp;&nbsp;{{MEETING_DATE}}</div>
+      <div class="meta-item"><strong>Duration</strong>&nbsp;&nbsp;{{MEETING_DURATION}}</div>
+      <div class="meta-item"><strong>Format</strong>&nbsp;&nbsp;{{MEETING_FORMAT}}</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CONTENT ═══════════ -->
+  <div class="content">
+
+    <!-- ATTENDEES -->
+    <div class="section">
+      <div class="section-label">Attendees</div>
+      <div class="attendees">
+        {{ATTENDEE_CHIPS_CLIENT_HTML}}
+        <!-- Each chip: <span class="attendee-chip">First Last &middot; Role</span> -->
+      </div>
+      <div class="attendees" style="margin-top:4px;">
+        {{ATTENDEE_CHIPS_RUH_HTML}}
+        <!-- Each chip: <span class="attendee-chip attendee-chip-ruh">First Last &middot; Ruh.AI</span> -->
+      </div>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <div class="section">
+      <div class="section-label">Executive Summary</div>
+      <h2 class="section-title">{{EXEC_SUMMARY_THESIS}}</h2>
+      <p>{{EXEC_SUMMARY_BODY}}</p>
+      <div class="callout">
+        <div class="callout-title"><span class="icon">!</span> The Big Idea</div>
+        <p>{{BIG_IDEA_HTML}}</p>
+      </div>
+    </div>
+
+    <!-- WHAT WE COVERED -->
+    <div class="section">
+      <div class="section-label">What We Covered</div>
+      <h2 class="section-title">Session Topics</h2>
+      <div class="topic-grid">
+        {{SESSION_TOPICS_HTML}}
+        <!-- Each topic:
+        <div class="topic-card">
+          <div class="topic-num">N</div>
+          <div class="topic-content">
+            <h4>Topic Title</h4>
+            <p>1–3 sentences describing what was demoed, named the attendee who participated when relevant.</p>
+          </div>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!-- KEY CONCEPTS -->
+    <div class="section">
+      <div class="section-label">Key Concepts</div>
+      <h2 class="section-title">Things to Remember</h2>
+      <ul class="concept-list">
+        {{KEY_CONCEPTS_HTML}}
+        <!-- Each concept: <li><strong>Named concept.</strong> One-sentence explanation.</li> -->
+      </ul>
+      <div class="quote-block">
+        <p>"{{LEAD_QUOTE}}"</p>
+        <span class="attribution">{{LEAD_QUOTE_ATTRIBUTION}}</span>
+      </div>
+    </div>
+
+    <!-- USE CASES -->
+    <div class="section">
+      <div class="section-label">Identified Use Cases</div>
+      <h2 class="section-title">Where {{CLIENT_COMPANY_SHORT}} Can Apply This</h2>
+      {{USE_CASES_HTML}}
+      <!-- Each use case:
+      <div class="callout">
+        <div class="callout-title"><span class="icon">N</span> Use Case Title</div>
+        <p>1–3 sentences using the company's actual vocabulary. Name projects, tools, or workflows from the meeting.</p>
+      </div>
+      -->
+    </div>
+
+    {{SECURITY_SECTION_HTML}}
+    <!-- If security came up substantively, render:
+    <div class="section">
+      <div class="section-label">Security &amp; Data</div>
+      <h2 class="section-title">Data Practices &amp; Trust</h2>
+      <p>Jesse addressed data security directly. Key points from the discussion:</p>
+      <div class="callout-dark callout">
+        <div class="callout-title"><span class="icon" style="background:rgba(255,255,255,0.1);">i</span> Summary</div>
+        <p>{{SECURITY_SUMMARY_HTML}}</p>
+      </div>
+    </div>
+    Otherwise leave this placeholder as an empty string. -->
+
+    <!-- NEXT ACTIONS -->
+    <div class="section">
+      <div class="section-label">Next Steps</div>
+      <h2 class="section-title">Action Items for {{CLIENT_COMPANY_SHORT}}</h2>
+      {{ACTION_ITEMS_HTML}}
+      <!-- Each item:
+      <div class="action-item">
+        <div class="action-check"></div>
+        <div class="action-text"><strong>Action title.</strong> One-to-two sentence description.</div>
+      </div>
+      Attributed items first (e.g., "Nick: monitor team usage..."), then general items. -->
+
+      <div class="callout-dark callout" style="margin-top:24px;">
+        <div class="callout-title"><span class="icon" style="background:rgba(255,255,255,0.1);">?</span> Stuck on something?</div>
+        <p>{{STUCK_CALLOUT_BODY}}</p>
+      </div>
+    </div>
+
+    <!-- WORKSHOP NEXT PREVIEW -->
+    <div class="section">
+      <div class="section-label">Looking Ahead</div>
+      <h2 class="section-title">Workshop #{{WORKSHOP_NEXT_NUMBER}} Preview</h2>
+      <p>{{WORKSHOP_NEXT_INTRO}}</p>
+      <ul class="concept-list">
+        {{WORKSHOP_NEXT_TOPICS_HTML}}
+        <!-- Each: <li><strong>Topic name</strong> — one-line description.</li> -->
+      </ul>
+    </div>
+
+    <!-- MEETING RECORDING -->
+    <div class="section">
+      <div class="meeting-link-box">
+        <p>Full meeting recording &amp; transcript</p>
+        <a href="{{MEETING_LINK_URL}}" target="_blank">Meeting Link</a>
+      </div>
+    </div>
+
+    <!-- APPENDIX -->
+    <div class="section">
+      <div class="section-label">Appendix</div>
+      <h2 class="section-title">Key Prompts from the Workshop</h2>
+      <p>{{APPENDIX_INTRO}}</p>
+
+      {{APPENDIX_PROMPTS_HTML}}
+      <!-- Each prompt block:
+      <div style="margin-top:24px;">
+        <h4 style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:8px;">N. Prompt Title</h4>
+        <p class="appendix-context">One-sentence context: when in the meeting it was shared and why.</p>
+        <div class="appendix-prompt">Verbatim prompt text. Preserve line breaks. Do not paraphrase.</div>
+      </div>
+      -->
+    </div>
+
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <div class="footer">
+    <div class="footer-logos">
+      <div class="logo-ruh">
+        <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+          <path d="M6.438 12.5003C5.88097 12.4512 5.54494 11.8503 5.82311 11.3549C6.11597 10.8337 6.88643 10.8424 7.1646 11.3729C7.42734 11.8738 7.08278 12.4552 6.52978 12.5003C6.50393 12.5024 6.46385 12.5026 6.43824 12.5003H6.438Z" fill="#7B5AFF"/>
+          <path d="M6.60197 7.63229C5.69658 7.70885 5.05275 6.77755 5.48932 5.97021C5.91854 5.17685 7.07174 5.18681 7.48768 5.98822C7.84861 6.68392 7.38666 7.56616 6.60221 7.63229H6.60197Z" fill="#7B5AFF"/>
+          <path d="M9.37077 10.0683C8.79879 10.1233 8.36744 9.59237 8.56165 9.04577C8.77816 8.43682 9.63186 8.36974 9.94583 8.93294C10.2072 9.40203 9.90955 10.0164 9.37077 10.0683Z" fill="#7B5AFF"/>
+          <path d="M3.78138 10.0688C3.10649 10.129 2.6794 9.38357 3.08941 8.84266C3.43872 8.38186 4.17171 8.47668 4.39723 9.00716C4.595 9.47246 4.28933 10.0236 3.78138 10.0688Z" fill="#7B5AFF"/>
+          <path d="M9.36277 4.51006C8.7953 4.56292 8.36964 4.02698 8.56148 3.48749C8.75333 2.948 9.4811 2.81194 9.85744 3.24903C10.2554 3.71125 9.97056 4.45341 9.36277 4.51006Z" fill="#7B5AFF"/>
+          <path d="M3.76963 4.47716C3.1424 4.5331 2.71389 3.86916 3.0364 3.32446C3.35227 2.79113 4.15878 2.84802 4.39544 3.42093C4.58989 3.89121 4.28043 4.43188 3.76939 4.47739L3.76963 4.47716Z" fill="#7B5AFF"/>
+          <path d="M6.55091 2.05545C6.02447 2.08413 5.63248 1.58873 5.77429 1.08053C5.94503 0.468743 6.77596 0.330315 7.13593 0.856769C7.47243 1.34909 7.14684 2.02298 6.55091 2.05545Z" fill="#7B5AFF"/>
+          <path d="M1.36206 7.26743C0.67768 7.33333 0.245853 6.58122 0.665824 6.03699C1.07512 5.50674 1.94044 5.74709 2.02486 6.41103C2.07679 6.82015 1.78013 7.22737 1.3623 7.26743H1.36206Z" fill="#7B5AFF"/>
+          <path d="M11.8015 7.26743C11.1171 7.33333 10.6853 6.58122 11.1053 6.03699C11.5146 5.50674 12.3799 5.74709 12.4643 6.41103C12.5162 6.82015 12.2196 7.22737 11.8018 7.26743H11.8015Z" fill="#7B5AFF"/>
+          <path d="M3.75138 7.72284C2.80401 7.77286 2.16872 6.75029 2.62592 5.9183C3.0568 5.13443 4.17206 5.07493 4.6876 5.80642C5.24061 6.591 4.70396 7.67236 3.75138 7.72261V7.72284Z" fill="#7B5AFF"/>
+          <path d="M6.60472 4.92713C5.86201 4.98781 5.24474 4.42865 5.26679 3.68104C5.30023 2.54517 6.73064 2.07656 7.43518 2.96378C8.02376 3.70522 7.54901 4.84962 6.60472 4.9269V4.92713Z" fill="#7B5AFF"/>
+          <path d="M6.51454 10.5233L6.45573 10.5254C5.50078 10.4967 4.93473 9.43693 5.46829 8.62982C5.93877 7.91825 6.99902 7.91137 7.48136 8.61442C8.03104 9.41583 7.47282 10.4922 6.51454 10.523V10.5233Z" fill="#7B5AFF"/>
+          <path d="M9.33502 7.72304C8.38837 7.77021 7.75521 6.74693 8.21455 5.91588C8.64732 5.13296 9.77183 5.07512 10.2788 5.81443C10.8209 6.60471 10.2869 7.67563 9.33502 7.72304Z" fill="#7B5AFF"/>
+        </svg>
+        <span class="logo-ruh-text" style="font-size:16px;color:#1a1a2e;">RUH</span>
+      </div>
+      <div class="footer-divider"></div>
+      <span style="font-size:12px;color:#777;font-weight:500;letter-spacing:1px;">{{CLIENT_COMPANY_UPPER}}</span>
+    </div>
+    <p class="footer-text">
+      <a href="https://ruh.ai">ruh.ai</a> &nbsp;&middot;&nbsp; <a href="{{CLIENT_WEBSITE}}">{{CLIENT_WEBSITE_DISPLAY}}</a><br><br>
+      Your Business. Supercharged by AI.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
